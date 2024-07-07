@@ -1,0 +1,61 @@
+import graphics
+import console
+import os
+import math
+
+if(os.args().length < 2){
+    print(console.red("Please pass an image to render!"))
+    exit(2)
+}
+
+var int i = 1
+var unicode = false
+var size = 100
+var string? output = null
+if(os.args().length > i && os.args()[i] == "-u"){
+    i++
+    unicode = true
+}
+if(os.args().length > i && os.args()[i] == "-s"){
+    i++
+    if(os.args().length < i){
+        print(console.red("Please pass a size!"))
+        exit(2)
+    }
+    size = int(os.args()[i])
+    i++
+}
+if(os.args().length > i && os.args()[i] == "-o"){
+    i++
+    if(os.args().length < i){
+        print(console.red("Please pass an output file!"))
+        exit(2)
+    }
+    output = os.args()[i]
+    i++
+}
+
+if(os.args().length < i + 1){
+    print(console.red("Please pass an image to render!"))
+    exit(2)
+}
+
+var image = Canvas:fromFile(os.args()[i])
+var outImage = new Canvas(size, size)
+var width = int(math.min(double(image.width), double(size)))
+var height = int(math.min(double(image.height), double(size)))
+repeat(height, y = 0){
+    repeat(width, x = 0){
+        var color = image.getPixel(int(x * image.width / width), int(y * image.height / height))
+        if(unicode){
+            print(console.rgb("■ ", int(color.r), int(color.g), int(color.b)), false)
+        }else{
+            print(console.rgb("O ", int(color.r), int(color.g), int(color.b)), false)
+        }
+        outImage.setPixel(x, y, color)
+    }
+    print("")
+}
+if(output != null){
+    outImage.save(output?!)
+}
